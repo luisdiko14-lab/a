@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AudioQuack Community</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1:#020617;
+      --bg-2:#0f172a;
+      --card:rgba(255,255,255,.07);
+      --card-2:rgba(255,255,255,.05);
+      --border:rgba(255,255,255,.08);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --blue:#5865F2;
+      --blue-2:#7289da;
+      --cyan:#00d4ff;
+      --green:#23a55a;
+      --yellow:#f0b232;
+      --red:#f23f43;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%}
+    body{
+      font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(88,101,242,.20) 0%, transparent 30%),
+        radial-gradient(circle at 90% 90%, rgba(0,212,255,.14) 0%, transparent 28%),
+        radial-gradient(circle at 50% 50%, rgba(255,0,170,.10) 0%, transparent 25%),
+        linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      overflow-x:hidden;
+    }
+
+    .bg-blobs{
+      position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden;
+    }
+    .blob{
+      position:absolute; border-radius:999px; filter:blur(70px); opacity:.28; animation:float 14s ease-in-out infinite;
+    }
+    .blob.one{width:280px;height:280px;background:var(--blue);top:-70px;left:-90px}
+    .blob.two{width:220px;height:220px;background:var(--cyan);bottom:-70px;right:-60px;animation-delay:2s}
+    .blob.three{width:180px;height:180px;background:#ff00aa;top:55%;left:50%;animation-delay:4s}
+    @keyframes float{
+      0%,100%{transform:translate3d(0,0,0) scale(1)}
+      50%{transform:translate3d(20px,-25px,0) scale(1.05)}
+    }
+
+    .wrap{
+      width:min(1280px, calc(100% - 32px));
+      margin:0 auto;
+      padding:24px 0 36px;
+    }
+
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      margin-bottom:22px;
+      padding:20px 22px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      backdrop-filter:blur(18px);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .brand{
+      display:flex;align-items:center;gap:16px;min-width:0;
+    }
+    .logo{
+      width:64px;height:64px;border-radius:20px;
+      background:linear-gradient(135deg,var(--blue),var(--cyan));
+      display:grid;place-items:center;
+      font-weight:900;font-size:28px;
+      box-shadow:0 0 30px rgba(88,101,242,.35);
+      flex:0 0 auto;
+    }
+    .brand h1{
+      font-size:clamp(22px,4vw,34px);
+      line-height:1.05;
+      margin-bottom:4px;
+    }
+    .brand p{color:var(--muted);font-size:14px}
+    .live-pill{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:11px 16px;border-radius:999px;
+      background:rgba(35,165,90,.14);
+      color:#d7ffe7;
+      border:1px solid rgba(35,165,90,.25);
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .pulse{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--green);
+      box-shadow:0 0 0 0 rgba(35,165,90,.55);
+      animation:pulse 2s infinite;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(35,165,90,.55)}
+      70%{box-shadow:0 0 0 14px rgba(35,165,90,0)}
+      100%{box-shadow:0 0 0 0 rgba(35,165,90,0)}
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background:var(--card);
+      backdrop-filter:blur(18px);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .left, .right, .members{
+      padding:20px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
+    .stat{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.05);
+      min-height:96px;
+    }
+    .stat .label{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:10px;
+    }
+    .stat .value{
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.04em;
+    }
+    .stat .sub{
+      margin-top:8px;
+      color:#cbd5e1;
+      font-size:12px;
+    }
+
+    .status-list{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+    .status-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.05);
+      transition:transform .2s ease, background .2s ease;
+    }
+    .status-row:hover{transform:translateY(-2px);background:rgba(255,255,255,.06)}
+    .status-left{
+      display:flex;align-items:center;gap:12px;min-width:0;
+      font-weight:700;
+    }
+    .dot{
+      width:12px;height:12px;border-radius:50%;flex:0 0 auto;
+      box-shadow:0 0 12px currentColor;
+    }
+    .online{background:var(--green);color:var(--green)}
+    .idle{background:var(--yellow);color:var(--yellow)}
+    .dnd{background:var(--red);color:var(--red)}
+    .offline{background:#80848e;color:#80848e}
+    .status-count{font-weight:900;font-size:18px}
+    .bar{
+      margin-top:14px;
+      height:14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .bar > span{
+      display:block;height:100%;
+      width:72%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--blue),var(--cyan));
+      animation:grow 3s ease-in-out infinite alternate;
+    }
+    @keyframes grow{
+      from{width:62%}
+      to{width:83%}
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .search, .filter{
+      width:100%;
+      border:none;
+      outline:none;
+      color:var(--text);
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:18px;
+      padding:14px 16px;
+      font:inherit;
+    }
+    .search::placeholder{color:#8fa0b8}
+    .filter{cursor:pointer}
+
+    .widget-shell{
+      position:relative;
+      overflow:hidden;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(0,0,0,.18);
+      min-height:680px;
+    }
+    iframe{
+      display:block;
+      width:100%;
+      height:680px;
+      border:0;
+      background:#111827;
+    }
+    .widget-fallback{
+      position:absolute;
+      inset:0;
+      display:none;
+      padding:24px;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      background:
+        linear-gradient(180deg, rgba(2,6,23,.85), rgba(15,23,42,.95));
+    }
+    .widget-fallback .box{
+      max-width:420px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.05);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 20px 50px rgba(0,0,0,.25);
+    }
+    .widget-fallback h3{font-size:22px;margin-bottom:10px}
+    .widget-fallback p{color:var(--muted);line-height:1.6;margin-bottom:16px}
+    .btns{
+      display:flex;gap:12px;flex-wrap:wrap;justify-content:center
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:12px 16px;border-radius:16px;
+      text-decoration:none;font-weight:800;color:white;
+      border:1px solid transparent;
+      transition:transform .2s ease, opacity .2s ease;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue-2))}
+    .btn.ghost{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.08)}
+
+    .section-title{
+      display:flex;align-items:end;justify-content:space-between;gap:12px;
+      margin:10px 0 16px;
+    }
+    .section-title h2{
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+    .section-title span{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .members-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .member{
+      position:relative;
+      overflow:hidden;
+      display:flex;align-items:center;gap:14px;
+      padding:16px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.04);
+      transition:transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .member:hover{transform:translateY(-2px);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+    .member::before{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(90deg, rgba(88,101,242,.08), transparent 42%);
+      pointer-events:none;
+    }
+    .avatar{
+      width:56px;height:56px;border-radius:50%;
+      border:3px solid rgba(255,255,255,.12);
+      object-fit:cover;
+      flex:0 0 auto;
+      background:#0b1220;
+    }
+    .member-info{min-width:0;flex:1}
+    .member-name{
+      font-weight:900;font-size:16px;margin-bottom:4px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .member-meta{
+      color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .member-tag{
+      display:inline-flex;align-items:center;gap:8px;
+      margin-top:8px;
+      font-size:12px;font-weight:800;
+      color:#dbeafe;
+      padding:7px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      width:max-content;
+    }
+    .mini-dot{width:9px;height:9px;border-radius:50%}
+    .mini-online{background:var(--green)}
+    .mini-idle{background:var(--yellow)}
+    .mini-dnd{background:var(--red)}
+    .mini-offline{background:#80848e}
+
+    .footer-note{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .hidden{display:none !important}
+
+    @media (max-width: 1100px){
+      .grid{grid-template-columns:1fr}
+      .widget-shell, iframe{min-height:560px;height:560px}
+    }
+    @media (max-width: 700px){
+      .hero{flex-direction:column;align-items:flex-start}
+      .toolbar{grid-template-columns:1fr}
+      .members-grid{grid-template-columns:1fr}
+      .stats{grid-template-columns:1fr}
+      .left,.right,.members{padding:16px}
+      .widget-shell, iframe{min-height:480px;height:480px}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+  </div>
+
+  <div class="wrap">
+    <header class="hero card">
+      <div class="brand">
+        <div class="logo">AQ</div>
+        <div>
+          <h1>AudioQuack Community</h1>
+          <p>Premium Discord dashboard with online, idle, DND, and members view.</p>
+        </div>
+      </div>
+      <div class="live-pill"><span class="pulse"></span><span>Live Community</span></div>
+    </header>
+
+    <main class="grid">
+      <section class="left card">
+        <div class="section-title">
+          <h2>Server Status</h2>
+          <span id="clock">--:--:--</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Total Members</div>
+            <div class="value" id="totalMembers">1,284</div>
+            <div class="sub">Estimated community size</div>
+          </div>
+          <div class="stat">
+            <div class="label">Boost Level</div>
+            <div class="value">3</div>
+            <div class="sub">Server perks active</div>
+          </div>
+        </div>
+
+        <div class="status-list">
+          <div class="status-row">
+            <div class="status-left"><span class="dot online"></span>Online</div>
+            <div class="status-count" id="onlineCount">742</div>
+          </div>
+          <div class="status-row">
+            <div class="status-left"><span class="dot idle"></span>Idle</div>
+            <div class="status-count" id="idleCount">321</div>
+          </div>
+          <div class="status-row">
+            <div class="status-left"><span class="dot dnd"></span>Do Not Disturb</div>
+            <div class="status-count" id="dndCount">96</div>
+          </div>
+          <div class="status-row">
+            <div class="status-left"><span class="dot offline"></span>Offline</div>
+            <div class="status-count" id="offlineCount">2,401</div>
+          </div>
+        </div>
+
+        <div class="bar" aria-label="online activity bar"><span></span></div>
+
+        <div class="footer-note">
+          This panel is fully front-end. To show real Discord presence data in a live member list, you would need a backend connected to the Discord API.
+        </div>
+      </section>
+
+      <section class="right card">
+        <div class="section-title">
+          <h2>Discord Widget</h2>
+          <span>Server preview</span>
+        </div>
+
+        <div class="widget-shell" id="widgetShell">
+          <iframe
+            id="discordWidget"
+            src="https://discord.com/widget?id=1357882872781996242&theme=dark"
+            allowtransparency="true"
+            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+            title="Discord server widget"></iframe>
+
+          <div class="widget-fallback" id="fallback">
+            <div class="box">
+              <h3>Widget blocked or unavailable</h3>
+              <p>The server widget may be disabled in Discord settings or blocked by the browser. You can still use the buttons below.</p>
+              <div class="btns">
+                <a class="btn primary" href="https://discord.com/channels/1357882872781996242" target="_blank" rel="noopener">Open Server</a>
+                <a class="btn ghost" href="https://discord.com/app" target="_blank" rel="noopener">Open Discord</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btns" style="margin-top:14px">
+          <a class="btn primary" href="https://discord.com/channels/1357882872781996242" target="_blank" rel="noopener">Join / Open Server</a>
+          <a class="btn ghost" href="https://aqmusic.qzz.io/" target="_blank" rel="noopener">Visit Website</a>
+        </div>
+      </section>
+    </main>
+
+    <section class="members card" style="margin-top:22px;">
+      <div class="section-title">
+        <h2>Members</h2>
+        <span id="memberCountLabel">Showing 8 members</span>
+      </div>
+
+      <div class="toolbar">
+        <input class="search" id="search" type="text" placeholder="Search members..." />
+        <select class="filter" id="statusFilter">
+          <option value="all">All statuses</option>
+          <option value="online">Online</option>
+          <option value="idle">Idle</option>
+          <option value="dnd">DND</option>
+          <option value="offline">Offline</option>
+        </select>
+        <select class="filter" id="sortFilter">
+          <option value="default">Default order</option>
+          <option value="name">Sort by name</option>
+          <option value="status">Sort by status</option>
+        </select>
+      </div>
+
+      <div class="members-grid" id="membersGrid"></div>
+    </section>
+  </div>
+
+  <script>
+    const members = [
+      { name: "Luis",     status: "online",  note: "Listening to AudioQuack", avatar: "https://cdn.discordapp.com/embed/avatars/0.png" },
+      { name: "Anna",     status: "idle",    note: "Away for a moment",      avatar: "https://cdn.discordapp.com/embed/avatars/1.png" },
+      { name: "CanaryBot",status: "dnd",     note: "Moderating the server",  avatar: "https://cdn.discordapp.com/embed/avatars/2.png" },
+      { name: "AudioQuack",status:"online",  note: "Streaming music",        avatar: "https://cdn.discordapp.com/embed/avatars/3.png" },
+      { name: "Mika",     status: "offline",  note: "Last seen today",        avatar: "https://cdn.discordapp.com/embed/avatars/4.png" },
+      { name: "Nova",     status: "online",   note: "Editing announcements",  avatar: "https://cdn.discordapp.com/embed/avatars/5.png" },
+      { name: "Echo",     status: "idle",     note: "AFK",                    avatar: "https://cdn.discordapp.com/embed/avatars/6.png" },
+      { name: "Rin",      status: "dnd",      note: "Do not disturb",         avatar: "https://cdn.discordapp.com/embed/avatars/7.png" }
+    ];
+
+    const statusLabels = {
+      online: "Online",
+      idle: "Idle",
+      dnd: "DND",
+      offline: "Offline"
+    };
+
+    const statusOrder = {
+      online: 0,
+      idle: 1,
+      dnd: 2,
+      offline: 3
+    };
+
+    const membersGrid = document.getElementById("membersGrid");
+    const search = document.getElementById("search");
+    const statusFilter = document.getElementById("statusFilter");
+    const sortFilter = document.getElementById("sortFilter");
+    const memberCountLabel = document.getElementById("memberCountLabel");
+
+    const onlineCount = document.getElementById("onlineCount");
+    const idleCount = document.getElementById("idleCount");
+    const dndCount = document.getElementById("dndCount");
+    const offlineCount = document.getElementById("offlineCount");
+    const totalMembers = document.getElementById("totalMembers");
+    const clock = document.getElementById("clock");
+
+    const fallback = document.getElementById("fallback");
+    const widget = document.getElementById("discordWidget");
+
+    function formatNumber(n) {
+      return new Intl.NumberFormat().format(n);
+    }
+
+    function renderMembers() {
+      const query = search.value.trim().toLowerCase();
+      const filter = statusFilter.value;
+      const sort = sortFilter.value;
+
+      let items = members.filter(m => {
+        const matchesName = m.name.toLowerCase().includes(query) || m.note.toLowerCase().includes(query);
+        const matchesStatus = filter === "all" || m.status === filter;
+        return matchesName && matchesStatus;
+      });
+
+      if (sort === "name") {
+        items.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sort === "status") {
+        items.sort((a, b) => statusOrder[a.status] - statusOrder[b.status] || a.name.localeCompare(b.name));
+      }
+
+      membersGrid.innerHTML = items.map(member => `
+        <article class="member">
+          <img class="avatar" src="${member.avatar}" alt="${member.name} avatar" loading="lazy">
+          <div class="member-info">
+            <div class="member-name">${member.name}</div>
+            <div class="member-meta">${member.note}</div>
+            <div class="member-tag">
+              <span class="mini-dot mini-${member.status}"></span>
+              ${statusLabels[member.status]}
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      memberCountLabel.textContent = `Showing ${items.length} member${items.length === 1 ? "" : "s"}`;
+    }
+
+    function refreshStats() {
+      const online = Math.floor(700 + Math.random() * 160);
+      const idle = Math.floor(250 + Math.random() * 150);
+      const dnd = Math.floor(70 + Math.random() * 80);
+      const offline = Math.floor(2000 + Math.random() * 700);
+      const total = online + idle + dnd + offline;
+
+      onlineCount.textContent = formatNumber(online);
+      idleCount.textContent = formatNumber(idle);
+      dndCount.textContent = formatNumber(dnd);
+      offlineCount.textContent = formatNumber(offline);
+      totalMembers.textContent = formatNumber(total);
+    }
+
+    function updateClock() {
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    search.addEventListener("input", renderMembers);
+    statusFilter.addEventListener("change", renderMembers);
+    sortFilter.addEventListener("change", renderMembers);
+
+    widget.addEventListener("error", () => {
+      fallback.style.display = "flex";
+    });
+
+    setTimeout(() => {
+      try {
+        if (!widget.contentWindow) {
+          fallback.style.display = "flex";
+        }
+      } catch (e) {
+        fallback.style.display = "flex";
+      }
+    }, 2500);
+
+    renderMembers();
+    refreshStats();
+    updateClock();
+    setInterval(refreshStats, 3000);
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
